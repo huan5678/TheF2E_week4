@@ -3,16 +3,21 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
 import Card from './components/Card';
+import ChartComponent from "./components/ChartComponent";
+import {ResponsiveContainer} from 'recharts';
+
 function App() {
 
-  const { salaryData, area, areaPerson, maleNum, femaleNum } =
+  const { salaryData, area, maleNum, femaleNum, totalNum, genderData, areaPerson} =
     useSalaryContext();
 
   console.log('資料', salaryData);
   console.log('地區', area);
-  console.log('地區人數', areaPerson);
   console.log('男性', maleNum);
   console.log('女性', femaleNum);
+  console.log('總人數', totalNum);
+  console.log('地區人數', areaPerson);
+
 
 
   return (
@@ -20,22 +25,16 @@ function App() {
       <Header />
       <Hero />
       <div className="container flex flex-wrap justify-between gap-x-5 gap-y-10">
-        <Card
-          title="地區"
-          data={{
-            type: "bar",
-            data: {
-              labels: [...area],
-              datasets: [
-                {
-                  data: [],
-                  backgroundColor: ["#8E7DFA"],
-                },
-              ],
-            },
-          }}
-          className={`w-full md:w-1/2`}
-        />
+        <Card title="地區" className={`w-full`}>
+              <ChartComponent
+                data={{
+                  type: "bar",
+                  data: areaPerson,
+                  dataKey: "value",
+                  unit: "人",
+                }}
+            />
+        </Card>
         {/* <Card
           title="年齡"
           data={{
@@ -44,22 +43,25 @@ function App() {
           }}
           className={`w-full md:w-1/2`}
         /> */}
-        <Card
-          title="性別比例"
-          data={{
-            type: "pie",
-            data: {
-              labels: ["男性", "女性"],
-              datasets: [
-                {
-                  data: [maleNum, femaleNum],
-                  backgroundColor: ["#D2CBFD", "#8E7DFA"],
-                },
-              ],
-            },
-          }}
-          className={`w-full md:w-1/2`}
-        />
+        <Card title="性別比例" className={`w-full md:w-1/2`}>
+          <div className="flex justify-center items-center">
+            <div className="text-white text-right">
+              <h3>女</h3>
+              {Number((femaleNum / totalNum) * 100).toFixed(0)}%
+            </div>
+            <ChartComponent
+              data={{
+                type: "pie",
+                data: genderData,
+                unit: "人",
+              }}
+            />
+            <div className="text-white text-right">
+              <h3>男</h3>
+              {Number((maleNum / totalNum) * 100).toFixed(0)}%
+            </div>
+          </div>
+        </Card>
         {/* <Card
           title="科系與學歷"
           data={{
