@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload, unit }) => {
   return null;
 };
 
-const Charts = ({ data }) => {
+const Charts = ({ data, children }) => {
     switch (data.type) {
     case "pie":
         return (
@@ -64,6 +64,7 @@ const Charts = ({ data }) => {
         return (
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
+              layout={data.layout ? data.layout : "horizontal"}
               data={data.data}
               margin={{
                 top: 5,
@@ -72,16 +73,40 @@ const Charts = ({ data }) => {
                 bottom: 5,
               }}
             >
-              <CartesianGrid vertical={false} />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <CartesianGrid
+                vertical={data.gridVertical ? data.gridVertical : false}
+                horizontal={data.gridHorizontal ? data.gridHorizontal : false}
+              />
+              {data.XAxis ? (
+                <XAxis
+                  dataKey={data.XAxis.dataKey}
+                  type={data.XAxis.type}
+                  tick={{ fill: "#F2F2F4" }}
+                />
+              ) : (
+                <XAxis dataKey="name" tick={{ fill: "#F2F2F4" }} />
+              )}
+
+              {data.YAxis.dataKey ? (
+                <YAxis
+                  dataKey={data.YAxis.dataKey}
+                  type={data.YAxis.type}
+                  tick={{ fill: "#F2F2F4" }}
+                />
+              ) : (
+                <YAxis tick={{ fill: "#F2F2F4" }} />
+              )}
               <Tooltip
                 cursor={{
                   fill: "#8E7DFA66",
                 }}
                 content={<CustomTooltip unit={data.unit} />}
               />
-              <Bar dataKey={data.dataKey} fill="#8E7DFA" />
+              {children ? (
+                children
+              ) : (
+                <Bar dataKey={data.dataKey} fill="#8E7DFA" />
+              )}
             </BarChart>
           </ResponsiveContainer>
         );
@@ -90,10 +115,10 @@ const Charts = ({ data }) => {
     }
 };
 
-function ChartComponent({ data }) {
+function ChartComponent({ data, children }) {
 
   return (
-    <Charts data={data} />
+    <Charts data={data} children={children} />
   )
 }
 
